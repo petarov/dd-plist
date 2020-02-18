@@ -691,7 +691,9 @@ public abstract class NSObject implements Cloneable {
         }
 
         for (Field field : objClass.getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            int modifiers = field.getModifiers();
+
+            if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
                 continue;
             }
 
