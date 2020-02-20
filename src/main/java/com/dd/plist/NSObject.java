@@ -390,6 +390,8 @@ public abstract class NSObject implements Cloneable {
                     throw new IllegalArgumentException("Could not access setter " + setter);
                 } catch (InvocationTargetException e) {
                     throw new IllegalArgumentException("Could not invoke setter " + setter);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Could not invoke setter " + setter, e);
                 }
 
             }
@@ -627,6 +629,10 @@ public abstract class NSObject implements Cloneable {
                 //XXX possible overflow
                 return (byte) number.intValue();
             }
+
+            if (clazz == boolean.class || clazz == Boolean.class) {
+                return number.boolValue();
+            }
         }
 
         if (number.isInteger() || number.isReal()) {
@@ -637,6 +643,10 @@ public abstract class NSObject implements Cloneable {
             if (clazz == float.class || clazz == Float.class) {
                 //XXX possible overflow
                 return number.floatValue();
+            }
+
+            if (clazz == boolean.class || clazz == Boolean.class) {
+                return number.boolValue();
             }
         }
 
