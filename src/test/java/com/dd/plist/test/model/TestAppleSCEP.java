@@ -38,7 +38,10 @@ public class TestAppleSCEP extends TestAppleAbstract {
 
     private boolean presentIs = false;
 
+    private SCEPStatus scepStatus = SCEPStatus.OK;
+
     private TestAppleSCEPContent payloadContent = new TestAppleSCEPContent();
+
 
     public TestAppleSCEP() {
         super("com.apple.security.scep");
@@ -60,12 +63,26 @@ public class TestAppleSCEP extends TestAppleAbstract {
         this.presentIs = presentIs;
     }
 
+    public SCEPStatus getScepStatus() {
+        return this.scepStatus;
+    }
+
+    public void setScepStatus(SCEPStatus scepStatus) {
+        this.scepStatus = scepStatus;
+    }
+
     public TestAppleSCEPContent getPayloadContent() {
         return this.payloadContent;
     }
 
     public void setPayloadContent(TestAppleSCEPContent payloadContent) {
         this.payloadContent = payloadContent;
+    }
+
+    public enum SCEPStatus {
+        OK,
+        ERROR,
+        IDLE
     }
 
     @PlistOptions(upperCamelCase = true)
@@ -182,11 +199,12 @@ public class TestAppleSCEP extends TestAppleAbstract {
                 Arrays.equals(this.emptyArrayIncluded, that.emptyArrayIncluded) &&
                 Objects.equals(this.nullInt, that.nullInt) &&
                 Objects.equals(this.isPresent, that.isPresent) &&
+                this.scepStatus == that.scepStatus &&
                 Objects.equals(this.payloadContent, that.payloadContent);
     }
 
     @Override public int hashCode() {
-        int result = Objects.hash(super.hashCode(), this.ignoredTransient, this.ignored, this.emptyTextIncluded, this.emptyText, this.nullInt, this.isPresent, this.presentIs, this.payloadContent);
+        int result = Objects.hash(super.hashCode(), this.ignoredTransient, this.ignored, this.emptyTextIncluded, this.emptyText, this.nullInt, this.isPresent, this.presentIs, this.scepStatus, this.payloadContent);
         result = 31 * result + Arrays.hashCode(this.emptyArray);
         result = 31 * result + Arrays.hashCode(this.emptyArrayIncluded);
         return result;

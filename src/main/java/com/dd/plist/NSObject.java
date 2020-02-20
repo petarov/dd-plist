@@ -218,6 +218,10 @@ public abstract class NSObject implements Cloneable {
             return fromArray(object, objClass);
         }
 
+        if (objClass.isEnum()) {
+            return new NSString(object.toString());
+        }
+
         if (isSimple(objClass)) {
             //process simple types
             return fromSimple(object, objClass);
@@ -303,6 +307,10 @@ public abstract class NSObject implements Cloneable {
 
         if (isSimple(clazz)) {
             return deserializeSimple(payload, clazz);
+        }
+
+        if (clazz.isEnum() && payload instanceof NSString) {
+            return Enum.valueOf((Class<Enum>) clazz, ((NSString) payload).getContent());
         }
 
         if (clazz == Object.class && !(payload instanceof NSSet || payload instanceof NSArray)) {

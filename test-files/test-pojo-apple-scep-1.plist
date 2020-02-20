@@ -33,6 +33,8 @@
         <true/>
         <key>PresentIs</key>
         <false/>
+        <key>ScepStatus</key>
+        <string>IDLE</string>
         <key>PayloadType</key>
         <string>com.apple.security.scep</string>
         <key>PayloadVersion</key>
