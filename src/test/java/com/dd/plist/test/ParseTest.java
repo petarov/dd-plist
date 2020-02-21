@@ -1,17 +1,31 @@
 package com.dd.plist.test;
 
 import com.dd.plist.*;
+import com.dd.plist.test.model.TestClass1;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ParseTest {
+
+    @Test
+    public void testNoXmlHeader() {
+        TestClass1 x = new TestClass1();
+        x.setMap(new HashMap<>());
+        x.getMap().put("key1", Collections.singletonList("one"));
+        x.getMap().put("key2", Collections.singletonList("two"));
+        String content = (NSObject.fromJavaObject(x).toXMLPropertyList(false));
+        assertFalse(content.contains("<?xml"));
+        assertFalse(content.contains("<!DOCTYPE"));
+        assertFalse(content.contains("<plist"));
+        assertTrue(content.startsWith("<dict"));
+    }
+
     /**
      * Test the xml reader/writer
      */
@@ -27,7 +41,7 @@ public class ParseTest {
         assertTrue(d.objectForKey("key&B").toString().equals("value&B"));
         assertTrue(((NSDate) d.objectForKey("date")).getDate().equals(new Date(1322472090000L)));
         assertTrue(Arrays.equals(((NSData) d.objectForKey("data")).bytes(),
-                new byte[] {0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
+                new byte[]{0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
         NSArray a = (NSArray) d.objectForKey("array");
         assertTrue(a.count() == 4);
         assertTrue(a.objectAtIndex(0).equals(new NSNumber(true)));
@@ -86,7 +100,7 @@ public class ParseTest {
         assertTrue(d.objectForKey("key&B").toString().equals("value&B"));
         assertTrue(((NSDate) d.objectForKey("date")).getDate().equals(new Date(1322472090000L)));
         assertTrue(Arrays.equals(((NSData) d.objectForKey("data")).bytes(),
-                new byte[] {0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
+                new byte[]{0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
         NSArray a = (NSArray) d.objectForKey("array");
         assertTrue(a.count() == 4);
         assertTrue(a.objectAtIndex(0).equals(new NSString("YES")));
@@ -104,7 +118,7 @@ public class ParseTest {
         assertTrue(d.objectForKey("key&B").toString().equals("value&B"));
         assertTrue(((NSDate) d.objectForKey("date")).getDate().equals(new Date(1322472090000L)));
         assertTrue(Arrays.equals(((NSData) d.objectForKey("data")).bytes(),
-                new byte[] {0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
+                new byte[]{0x00, 0x00, 0x00, 0x04, 0x10, 0x41, 0x08, 0x20, (byte) 0x82}));
         NSArray a = (NSArray) d.objectForKey("array");
         assertTrue(a.count() == 4);
         assertTrue(a.objectAtIndex(0).equals(new NSNumber(true)));

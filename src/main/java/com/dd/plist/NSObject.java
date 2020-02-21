@@ -96,11 +96,18 @@ public abstract class NSObject implements Cloneable {
     abstract void toBinary(BinaryPropertyListWriter out) throws IOException;
 
     /**
-     * Generates a valid XML property list including headers using this object as root.
+     * Generates a valid XML property list using this object as root.
      *
+     * @param wrap Set to {@code true} to include appropriate plist headers.
      * @return The XML representation of the property list including XML header and doctype information.
      */
-    public String toXMLPropertyList() {
+    public String toXMLPropertyList(boolean wrap) {
+        if (!wrap) {
+            StringBuilder xml = new StringBuilder();
+            this.toXML(xml, 0);
+            return xml.toString();
+        }
+
         StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
                 .append(NSObject.NEWLINE)
                 .append("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">")
@@ -110,6 +117,15 @@ public abstract class NSObject implements Cloneable {
         this.toXML(xml, 0);
         xml.append(NSObject.NEWLINE).append("</plist>");
         return xml.toString();
+    }
+
+    /**
+     * Generates a valid XML property list including headers using this object as root.
+     *
+     * @see #toXMLPropertyList(boolean)
+     */
+    public String toXMLPropertyList() {
+        return toXMLPropertyList(true);
     }
 
     /**
