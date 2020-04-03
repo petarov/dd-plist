@@ -5,6 +5,7 @@ import com.dd.plist.NSObject;
 import com.dd.plist.PropertyListParser;
 import com.dd.plist.test.model.TestAnnotationsClass1;
 import com.dd.plist.test.model.TestAnnotationsClass2;
+import com.dd.plist.test.model.TestAnnotationsClass3;
 import com.dd.plist.test.model.TestAppleSCEP;
 import org.junit.jupiter.api.Test;
 
@@ -87,6 +88,28 @@ public class PlistAnnotationsTest {
         assertTrue(xml.contains("<key>textIncluded</key>"), "Must be present - 'textIncluded'");
         assertTrue(xml.contains("<key>emptyArray</key>"), "Must be present - 'emptyArray'");
         assertTrue(xml.contains("<key>arrayIncluded</key>"), "Must be present - 'arrayIncluded'");
+        assertFalse(xml.contains("<key>nullArray</key>"), "Must NOT BE present - 'nullArray'");
+
+        TestAnnotationsClass3 obj3 = new TestAnnotationsClass3();
+        obj3.setEmptyText("Nope");
+        obj3.setBoolIncluded(true);
+        obj3.setCharIncluded('c');
+        obj3.setIntIncluded(-99);
+        obj3.setLongIncluded(Long.MAX_VALUE);
+        obj3.setArrayIncluded(new int[]{17, 56, -1});
+        obj3.setArrayStringsIncluded(new String[]{"17", "56", "0"});
+        xml = NSObject.fromJavaObject(obj3).toXMLPropertyList();
+
+        assertTrue(xml.contains("<string>Nope</string>"), "Must be present - 'emptyText'");
+        assertTrue(xml.contains("<integer>-99</integer>"), "Must be present - 'intIncluded'");
+        assertTrue(xml.contains("<key>longIncluded</key>"), "Must be present - 'longIncluded'");
+        assertTrue(xml.contains("<key>boolIncluded</key>"), "Must be present - 'boolIncluded'");
+        assertTrue(xml.contains("<key>arrayIncluded</key>"), "Must be present - 'arrayIncluded'");
+        assertFalse(xml.contains("<key>nullText</key>"), "Must NOT BE present - 'nullText'");
+        assertFalse(xml.contains("<key>textIncluded</key>"), "Must NOT BE present - 'textIncluded'");
+        assertFalse(xml.contains("<key>charIncluded</key>"), "Must NOT BE present - 'charIncluded'");
+        assertFalse(xml.contains("<key>emptyArray</key>"), "Must NOT BE present - 'emptyArray'");
+        assertFalse(xml.contains("<key>arrayStringsIncluded</key>"), "Must NOT BE present - 'arrayStringsIncluded'");
         assertFalse(xml.contains("<key>nullArray</key>"), "Must NOT BE present - 'nullArray'");
     }
 

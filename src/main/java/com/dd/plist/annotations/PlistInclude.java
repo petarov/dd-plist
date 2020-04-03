@@ -33,15 +33,15 @@ import java.lang.annotation.Target;
 public @interface PlistInclude {
 
     /**
-     * Inclusion rule to use for instances (values) of annotated properties. Defaults to {@link Include#DEFAULT}.
+     * Inclusion rule to use for instances (values) of annotated properties. Defaults to {@link Include#ALWAYS}.
      */
-    Include value() default Include.DEFAULT;
+    Include value() default Include.ALWAYS;
 
     enum Include {
         /**
          * Default behavior.
          */
-        DEFAULT,
+        ALWAYS,
         /**
          * Only non-null values are to be included.
          */
@@ -49,6 +49,10 @@ public @interface PlistInclude {
         /**
          * Only non-null values, non-empty strings and non-empty arrays are to be included.
          */
-        NON_EMPTY
+        NON_EMPTY,
+        /**
+         * Only non-default values plus the behavior of {@code NON_EMPTY}
+         */
+        NON_DEFAULT
     }
 }

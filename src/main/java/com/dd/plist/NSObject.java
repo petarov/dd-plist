@@ -28,6 +28,7 @@ import com.dd.plist.annotations.PlistInclude;
 import com.dd.plist.annotations.PlistOptions;
 import com.dd.plist.utils.ReflectionUtils;
 import com.dd.plist.utils.TextUtils;
+import sun.rmi.rmic.iiop.PrimitiveType;
 
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -761,7 +762,7 @@ public abstract class NSObject implements Cloneable {
                                     continue;
                                 }
                                 break;
-                            case NON_EMPTY:
+                            case NON_EMPTY: {
                                 if (value == null) {
                                     continue;
                                 }
@@ -778,8 +779,39 @@ public abstract class NSObject implements Cloneable {
                                 if (Map.class.isAssignableFrom(valueClass) && ((Map<?, ?>) value).isEmpty()) {
                                     continue;
                                 }
-                                break;
-                            case DEFAULT:
+                            }
+                            break;
+                            case NON_DEFAULT: {
+                                if (value == null) {
+                                    continue;
+                                }
+
+                                Class<?> valueClass = value.getClass();
+
+                                Object bean = objClass.getDeclaredConstructor().newInstance();
+                                Object valueDefault = ReflectionUtils.getPrivateFieldValue(field, bean);
+
+                                if (valueClass.isArray()) {
+                                    int len1 = Array.getLength(value);
+                                    int len2 = Array.getLength(valueDefault);
+                                    if (len1 == len2) {
+                                        boolean equal = true;
+                                        for (int i = 0; i < len1; i++) {
+                                            if (!Array.get(value, i).equals(Array.get(valueDefault, i))) {
+                                                equal = false;
+                                                break;
+                                            }
+                                        }
+                                        if (equal) {
+                                            continue;
+                                        }
+                                    }
+                                } else if (valueDefault.equals(value)) {
+                                    continue;
+                                }
+                            }
+                            break;
+                            case ALWAYS:
                             default:
                                 // do nothing
                                 break;
@@ -801,7 +833,9 @@ public abstract class NSObject implements Cloneable {
                     result.put(name, fromJavaObject(value == null ?
                             ReflectionUtils.getPrivateFieldValue(field, object) : value));
                 } catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException("Could not access field " + field.getName());
+                    throw new IllegalArgumentException("Could not access field " + field.getName(), e);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Could not serialize field " + field.getName(), e);
                 }
             }
         } else {

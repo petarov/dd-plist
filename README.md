@@ -196,4 +196,6 @@ In this example your property list file is called _properties.plist_.
         @PlistInclude(PlistInclude.Include.NON_NULL)
         private Integer nullInt = null; // will not be serialized
 
+        @PlistInclude(PlistInclude.Include.NON_DEFAULT)
+        private int value = 42; // will not be serialized unless changed to something other than 42
 ```
