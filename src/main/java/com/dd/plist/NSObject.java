@@ -28,7 +28,6 @@ import com.dd.plist.annotations.PlistInclude;
 import com.dd.plist.annotations.PlistOptions;
 import com.dd.plist.utils.ReflectionUtils;
 import com.dd.plist.utils.TextUtils;
-import sun.rmi.rmic.iiop.PrimitiveType;
 
 import java.io.IOException;
 import java.lang.reflect.*;
@@ -735,9 +734,9 @@ public abstract class NSObject implements Cloneable {
         if (objClass.isAnnotationPresent(PlistOptions.class)) {
             PlistOptions options = objClass.getAnnotation(PlistOptions.class);
 
-            PlistInclude classInclude = null;
+            PlistInclude.Include classIncludeValue = null;
             if (objClass.isAnnotationPresent(PlistInclude.class)) {
-                classInclude = objClass.getAnnotation(PlistInclude.class);
+                classIncludeValue = objClass.getAnnotation(PlistInclude.class).value();
             }
 
             for (Field field : ReflectionUtils.getAllFields(objClass)) {
@@ -750,10 +749,15 @@ public abstract class NSObject implements Cloneable {
                 Object value = null;
 
                 try {
-                    if (classInclude != null || field.isAnnotationPresent(PlistInclude.class)) {
-                        PlistInclude.Include includeValue = classInclude != null ? classInclude.value() :
-                                field.getAnnotation(PlistInclude.class).value();
+                    PlistInclude.Include includeValue = null;
 
+                    if (field.isAnnotationPresent(PlistInclude.class)) {
+                        includeValue = field.getAnnotation(PlistInclude.class).value();
+                    } else if (classIncludeValue != null) {
+                        includeValue = classIncludeValue;
+                    }
+
+                    if (includeValue != null) {
                         value = ReflectionUtils.getPrivateFieldValue(field, object);
 
                         switch (includeValue) {
